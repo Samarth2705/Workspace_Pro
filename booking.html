@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Resource — WorkSpace Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F7F5F2;
+      --white:    #FFFFFF;
+      --ink:      #1A1612;
+      --ink-2:    #6B6560;
+      --ink-3:    #A09A94;
+      --border:   #E8E4DF;
+      --border-2: #D8D2CB;
+      --accent:   #2563EB;
+      --accent-s: #EEF3FE;
+      --accent-h: #1D4ED8;
+      --green:    #16A34A;
+      --green-s:  #F0FDF4;
+      --red:      #DC2626;
+      --red-s:    #FEF2F2;
+      --amber:    #D97706;
+      --amber-s:  #FFFBEB;
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-body:    'Outfit', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--f-body); background: var(--bg); color: var(--ink); overflow-x: hidden; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      background: rgba(247,245,242,.94);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1160px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+    .logo-mark svg { width: 15px; height: 15px; fill: white; }
+    .logo-name { font-family: var(--f-display); font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
+    .logo-name span { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-user { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--ink-2); }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-s); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--accent); }
+    .nav-btn { font-size: 13px; font-weight: 500; color: var(--ink-2); padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); transition: all .2s; }
+    .nav-btn:hover { color: var(--ink); border-color: var(--border-2); }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb { max-width: 1160px; margin: 0 auto; padding: 24px 40px 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-3); }
+    .breadcrumb a { color: var(--ink-3); transition: color .2s; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb span { color: var(--border-2); }
+
+    /* ── PAGE LAYOUT ── */
+    .page { max-width: 1160px; margin: 0 auto; padding: 28px 40px 80px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {}
+
+    /* Page title */
+    .page-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+    .page-title { font-family: var(--f-display); font-size: 36px; font-weight: 500; line-height: 1.15; letter-spacing: -.3px; margin-bottom: 32px; }
+    .page-title em { font-style: italic; color: var(--accent); }
+
+    /* Step tabs */
+    .steps-nav { display: flex; align-items: center; gap: 0; margin-bottom: 32px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--white); }
+    .step-tab {
+      flex: 1; display: flex; align-items: center; gap: 10px; padding: 14px 18px;
+      font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer;
+      border-right: 1px solid var(--border); background: none; border-top: none; border-bottom: none; border-left: none;
+      font-family: var(--f-body); transition: background .15s;
+    }
+    .step-tab:last-child { border-right: none; }
+    .step-tab.active { background: var(--accent-s); color: var(--accent); }
+    .step-tab.done { color: var(--green); }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; background: var(--border); color: var(--ink-3); flex-shrink: 0; }
+    .step-tab.active .step-num { background: var(--accent); color: #fff; }
+    .step-tab.done .step-num { background: var(--green-s); color: var(--green); }
+
+    /* ── STEP PANELS ── */
+    .step-panel { display: none; }
+    .step-panel.show { display: block; }
+
+    /* ── STEP 1: Resource type ── */
+    .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+    .type-card {
+      background: var(--white); border: 2px solid var(--border); border-radius: 14px;
+      padding: 20px; cursor: pointer; transition: all .15s; text-align: left;
+    }
+    .type-card:hover { border-color: var(--border-2); }
+    .type-card.selected { border-color: var(--accent); background: var(--accent-s); }
+    .type-icon { font-size: 24px; margin-bottom: 10px; }
+    .type-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .type-desc { font-size: 12px; color: var(--ink-3); font-weight: 300; }
+    .type-card.selected .type-desc { color: rgba(37,99,235,.6); }
+
+    /* ── STEP 2: Date & Time ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label { font-size: 12px; font-weight: 500; color: var(--ink-2); letter-spacing: .02em; }
+    .form-input, .form-select {
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; font-family: var(--f-body); color: var(--ink);
+      transition: border-color .2s, box-shadow .2s; outline: none; width: 100%;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23A09A94' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+
+    /* Time slots */
+    .time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
+    .time-slot {
+      background: var(--white); border: 1px solid var(--border); border-radius: 9px;
+      padding: 9px 8px; text-align: center; font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all .15s; color: var(--ink-2);
+    }
+    .time-slot:hover { border-color: var(--accent); color: var(--accent); }
+    .time-slot.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .time-slot.unavailable { background: var(--bg); color: var(--ink-3); cursor: not-allowed; text-decoration: line-through; }
+
+    /* Duration toggle */
+    .duration-toggle { display: flex; background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .dur-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 500; font-family: var(--f-body); cursor: pointer; background: none; border: none; color: var(--ink-3); transition: all .15s; }
+    .dur-btn.active { background: var(--accent); color: #fff; }
+
+    /* ── STEP 3: Floor map ── */
+    .floor-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+    .floor-tabs { display: flex; gap: 4px; }
+    .floor-tab { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; background: var(--white); color: var(--ink-3); font-family: var(--f-body); transition: all .15s; }
+    .floor-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .filter-row { display: flex; gap: 8px; }
+    .filter-chip { font-size: 11px; font-weight: 500; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border); background: var(--white); cursor: pointer; color: var(--ink-2); font-family: var(--f-body); transition: all .15s; }
+    .filter-chip.active { background: var(--accent-s); border-color: rgba(37,99,235,.3); color: var(--accent); }
+
+    /* Map legend */
+    .map-legend { display: flex; gap: 16px; margin-bottom: 14px; }
+    .ml-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-2); }
+    .ml-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    /* Desk map */
+    .floor-map { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; position: relative; }
+    .map-label { font-size: 11px; font-weight: 500; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
+    .desk-zone { margin-bottom: 24px; }
+    .zone-label { font-size: 11px; color: var(--ink-3); margin-bottom: 10px; font-weight: 400; }
+    .desk-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .desk-unit {
+      width: 52px; height: 52px; border-radius: 10px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; cursor: pointer;
+      border: 1px solid transparent; transition: transform .15s, box-shadow .15s;
+      position: relative;
+    }
+    .desk-unit:hover { transform: scale(1.05); }
+    .desk-unit.free { background: var(--green-s); border-color: #BBF7D0; }
+    .desk-unit.taken { background: var(--red-s); border-color: #FECACA; cursor: not-allowed; }
+    .desk-unit.taken:hover { transform: none; }
+    .desk-unit.mine { background: var(--accent-s); border-color: #BFDBFE; box-shadow: 0 0 0 2px var(--accent); }
+    .desk-unit.empty { background: var(--bg); border-color: var(--border); cursor: default; }
+    .desk-unit.empty:hover { transform: none; }
+    .desk-id { font-size: 10px; font-weight: 600; }
+    .desk-unit.free  .desk-id { color: var(--green); }
+    .desk-unit.taken .desk-id { color: var(--red); }
+    .desk-unit.mine  .desk-id { color: var(--accent); }
+    .desk-unit.empty .desk-id { color: var(--ink-3); }
+    .desk-icon { font-size: 14px; margin-bottom: 2px; }
+
+    /* Desk tooltip */
+    .desk-unit .tooltip {
+      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: #fff; font-size: 11px; font-weight: 400;
+      padding: 5px 10px; border-radius: 7px; white-space: nowrap; pointer-events: none;
+      opacity: 0; transition: opacity .15s; z-index: 10;
+    }
+    .desk-unit:hover .tooltip { opacity: 1; }
+    .desk-unit .tooltip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:4px solid transparent; border-top-color: var(--ink); }
+
+    /* ── STEP 4: Confirm ── */
+    .confirm-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+    .confirm-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .confirm-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-s); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .confirm-title { font-size: 15px; font-weight: 500; }
+    .confirm-sub { font-size: 12px; color: var(--ink-3); font-weight: 300; }
+    .confirm-rows { padding: 8px 0; }
+    .confirm-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 24px; border-bottom: 1px solid var(--border); }
+    .confirm-row:last-child { border-bottom: none; }
+    .cr-label { font-size: 13px; color: var(--ink-2); font-weight: 300; }
+    .cr-value { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .cr-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+    .badge-green { background: var(--green-s); color: var(--green); }
+    .badge-blue  { background: var(--accent-s); color: var(--accent); }
+
+    .notes-area {
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; font-size: 14px; font-family: var(--f-body); color: var(--ink);
+      width: 100%; resize: vertical; min-height: 80px; outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .notes-area:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+    /* Nav buttons */
+    .step-actions { display: flex; gap: 12px; justify-content: space-between; margin-top: 28px; }
+    .btn-back { font-size: 14px; font-weight: 400; color: var(--ink-2); padding: 12px 22px; border-radius: 10px; border: 1px solid var(--border); background: none; cursor: pointer; font-family: var(--f-body); transition: all .2s; }
+    .btn-back:hover { color: var(--ink); border-color: var(--border-2); }
+    .btn-next { font-size: 14px; font-weight: 500; color: #fff; background: var(--accent); padding: 12px 28px; border-radius: 10px; border: none; cursor: pointer; font-family: var(--f-body); transition: all .2s; box-shadow: 0 4px 14px rgba(37,99,235,.25); display: flex; align-items: center; gap: 8px; }
+    .btn-next:hover { background: var(--accent-h); box-shadow: 0 6px 18px rgba(37,99,235,.35); transform: translateY(-1px); }
+    .btn-confirm { background: var(--green); box-shadow: 0 4px 14px rgba(22,163,74,.25); }
+    .btn-confirm:hover { background: #15803D; box-shadow: 0 6px 18px rgba(22,163,74,.35); }
+
+    /* ── RIGHT PANEL: Summary ── */
+    .right-panel { position: sticky; top: 96px; }
+    .summary-card { background: var(--white); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+    .summary-head { padding: 20px 22px; border-bottom: 1px solid var(--border); }
+    .sum-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+    .sum-sub { font-size: 12px; color: var(--ink-3); font-weight: 300; }
+    .summary-body { padding: 6px 0; }
+    .sum-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; border-bottom: 1px solid var(--border); }
+    .sum-row:last-child { border-bottom: none; }
+    .sum-key { font-size: 12px; color: var(--ink-3); font-weight: 300; }
+    .sum-val { font-size: 13px; font-weight: 500; color: var(--ink); text-align: right; }
+    .sum-val.placeholder { color: var(--ink-3); font-weight: 300; font-style: italic; }
+    .sum-val.highlight { color: var(--accent); }
+
+    /* Mini floor preview */
+    .mini-map { padding: 16px 22px 20px; border-top: 1px solid var(--border); }
+    .mini-map-label { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .07em; font-weight: 500; margin-bottom: 12px; }
+    .mini-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .mini-desk { aspect-ratio: 1; border-radius: 5px; }
+    .mini-desk.free  { background: var(--green-s); border: 1px solid #BBF7D0; }
+    .mini-desk.taken { background: var(--red-s); border: 1px solid #FECACA; }
+    .mini-desk.mine  { background: var(--accent); border: 1px solid var(--accent); }
+    .mini-desk.empty { background: var(--bg); border: 1px solid var(--border); }
+
+    /* Success screen */
+    .success-screen { display: none; text-align: center; padding: 60px 40px; }
+    .success-screen.show { display: block; }
+    .success-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--green-s); border: 2px solid #BBF7D0; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 24px; }
+    .success-title { font-family: var(--f-display); font-size: 32px; font-weight: 500; margin-bottom: 12px; }
+    .success-desc { font-size: 15px; color: var(--ink-2); font-weight: 300; line-height: 1.65; max-width: 380px; margin: 0 auto 32px; }
+    .success-ref { display: inline-block; background: var(--accent-s); color: var(--accent); font-size: 13px; font-weight: 500; padding: 8px 18px; border-radius: 100px; margin-bottom: 32px; }
+    .success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 900px) {
+      .page { grid-template-columns: 1fr; }
+      .right-panel { position: static; }
+      nav, .breadcrumb, .page { padding-left: 20px; padding-right: 20px; }
+      .type-grid { grid-template-columns: 1fr 1fr; }
+      .time-slots { grid-template-columns: repeat(3, 1fr); }
+      .steps-nav { flex-wrap: wrap; }
+    }
+    @media(max-width: 540px) {
+      .type-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+      </div>
+      <span class="logo-name">WorkSpace<span>Pro</span></span>
+    </a>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="user-avatar">A</div>
+        <span>Anurag</span>
+      </div>
+      <a href="#" class="nav-btn">My Bookings</a>
+    </div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html">Home</a>
+  <span>›</span>
+  <a href="#">Dashboard</a>
+  <span>›</span>
+  Book a Resource
+</div>
+
+<!-- MAIN PAGE -->
+<div class="page" id="mainPage">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="page-eyebrow">Employee Portal</div>
+    <h1 class="page-title">Book a <em>workspace</em></h1>
+
+    <!-- Step tabs -->
+    <div class="steps-nav">
+      <button class="step-tab active" id="tab-1" onclick="goToStep(1)">
+        <span class="step-num">1</span> Resource Type
+      </button>
+      <button class="step-tab" id="tab-2" onclick="goToStep(2)">
+        <span class="step-num">2</span> Date &amp; Time
+      </button>
+      <button class="step-tab" id="tab-3" onclick="goToStep(3)">
+        <span class="step-num">3</span> Pick a Desk
+      </button>
+      <button class="step-tab" id="tab-4" onclick="goToStep(4)">
+        <span class="step-num">4</span> Confirm
+      </button>
+    </div>
+
+    <!-- STEP 1: Resource type -->
+    <div class="step-panel show" id="step-1">
+      <p style="font-size:14px;color:var(--ink-2);font-weight:300;margin-bottom:20px;">What would you like to book today?</p>
+      <div class="type-grid">
+        <div class="type-card selected" onclick="selectType(this,'Desk')">
+          <div class="type-icon">🖥</div>
+          <div class="type-name">Individual Desk</div>
+          <div class="type-desc">Solo workspace with monitor &amp; chair</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'Meeting Room')">
+          <div class="type-icon">📋</div>
+          <div class="type-name">Meeting Room</div>
+          <div class="type-desc">Collaborative space for 2–10 people</div>
+        </div>
+        <div class="type-card" onclick="selectType(this,'Focus Pod')">
+          <div class="type-icon">🎧</div>
+          <div class="type-name">Focus Pod</div>
+          <div class="type-desc">Quiet, enclosed space for deep work</div>
+        </div>
+      </div>
+      <div class="step-actions" style="justify-content:flex-end;">
+        <button class="btn-next" onclick="nextStep(1)">Choose Date &amp; Time <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Date & time -->
+    <div class="step-panel" id="step-2">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="booking-date" value="2026-03-17"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Floor</label>
+          <select class="form-select" id="booking-floor" onchange="updateSummary()">
+            <option value="Floor 1">Floor 1 — Ground</option>
+            <option value="Floor 2">Floor 2 — Mezzanine</option>
+            <option value="Floor 3" selected>Floor 3 — Main</option>
+            <option value="Floor 4">Floor 4 — Executive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Start Time</label>
+        <div class="time-slots" id="timeSlots">
+          <div class="time-slot unavailable" title="Not available">8:00 AM</div>
+          <div class="time-slot" onclick="selectTime(this,'9:00 AM')">9:00 AM</div>
+          <div class="time-slot selected" onclick="selectTime(this,'10:00 AM')">10:00 AM</div>
+          <div class="time-slot" onclick="selectTime(this,'11:00 AM')">11:00 AM</div>
+          <div class="time-slot unavailable" title="Not available">12:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'1:00 PM')">1:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'2:00 PM')">2:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'3:00 PM')">3:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'4:00 PM')">4:00 PM</div>
+          <div class="time-slot unavailable" title="Not available">5:00 PM</div>
+          <div class="time-slot unavailable" title="Not available">6:00 PM</div>
+          <div class="time-slot" onclick="selectTime(this,'7:00 PM')">7:00 PM</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:8px;">
+        <label class="form-label">Duration</label>
+        <div class="duration-toggle">
+          <button class="dur-btn" onclick="selectDur(this,'1 hour')">1 hr</button>
+          <button class="dur-btn" onclick="selectDur(this,'2 hours')">2 hrs</button>
+          <button class="dur-btn active" onclick="selectDur(this,'3 hours')">3 hrs</button>
+          <button class="dur-btn" onclick="selectDur(this,'4 hours')">4 hrs</button>
+          <button class="dur-btn" onclick="selectDur(this,'Full Day')">Full Day</button>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button class="btn-next" onclick="nextStep(2)">View Floor Map <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Pick a desk -->
+    <div class="step-panel" id="step-3">
+      <div class="floor-controls">
+        <div class="floor-tabs">
+          <button class="floor-tab active" onclick="switchFloor(this,'A')">Zone A</button>
+          <button class="floor-tab" onclick="switchFloor(this,'B')">Zone B</button>
+          <button class="floor-tab" onclick="switchFloor(this,'C')">Zone C</button>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip active" onclick="toggleChip(this)">🖥 Dual Monitor</button>
+          <button class="filter-chip" onclick="toggleChip(this)">🪟 Window</button>
+          <button class="filter-chip" onclick="toggleChip(this)">🔌 Standing</button>
+        </div>
+      </div>
+      <div class="map-legend">
+        <div class="ml-item"><span class="ml-dot" style="background:var(--green-s);border:1px solid #BBF7D0"></span>Available</div>
+        <div class="ml-item"><span class="ml-dot" style="background:var(--red-s);border:1px solid #FECACA"></span>Booked</div>
+        <div class="ml-item"><span class="ml-dot" style="background:var(--accent-s);border:1px solid #BFDBFE"></span>Your selection</div>
+        <div class="ml-item"><span class="ml-dot" style="background:var(--bg);border:1px solid var(--border)"></span>Unavailable</div>
+      </div>
+      <div class="floor-map">
+        <div class="map-label">Floor 3 — Zone A</div>
+        <div class="desk-zone">
+          <div class="zone-label">Row 1</div>
+          <div class="desk-row">
+            <div class="desk-unit free" onclick="selectDesk(this,'A-01')"><div class="desk-icon">🖥</div><div class="desk-id">A-01</div><div class="tooltip">A-01 · Dual Monitor</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-02')"><div class="desk-icon">🖥</div><div class="desk-id">A-02</div><div class="tooltip">A-02 · Window</div></div>
+            <div class="desk-unit taken"><div class="desk-icon">🖥</div><div class="desk-id">A-03</div><div class="tooltip">A-03 · Booked until 2PM</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-04')"><div class="desk-icon">🖥</div><div class="desk-id">A-04</div><div class="tooltip">A-04 · Standard</div></div>
+            <div class="desk-unit taken"><div class="desk-icon">🖥</div><div class="desk-id">A-05</div><div class="tooltip">A-05 · Booked all day</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-06')"><div class="desk-icon">🖥</div><div class="desk-id">A-06</div><div class="tooltip">A-06 · Standing Desk</div></div>
+            <div class="desk-unit empty"><div class="desk-id" style="font-size:18px;color:var(--border)">—</div></div>
+          </div>
+        </div>
+        <div class="desk-zone">
+          <div class="zone-label">Row 2</div>
+          <div class="desk-row">
+            <div class="desk-unit taken"><div class="desk-icon">🖥</div><div class="desk-id">A-07</div><div class="tooltip">A-07 · Booked</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-08')"><div class="desk-icon">🖥</div><div class="desk-id">A-08</div><div class="tooltip">A-08 · Dual Monitor</div></div>
+            <div class="desk-unit mine" id="desk-A-09" onclick="selectDesk(this,'A-09')"><div class="desk-icon">🖥</div><div class="desk-id">A-09</div><div class="tooltip">A-09 · Selected</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-10')"><div class="desk-icon">🖥</div><div class="desk-id">A-10</div><div class="tooltip">A-10 · Window</div></div>
+            <div class="desk-unit taken"><div class="desk-icon">🖥</div><div class="desk-id">A-11</div><div class="tooltip">A-11 · Booked</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-12')"><div class="desk-icon">🖥</div><div class="desk-id">A-12</div><div class="tooltip">A-12 · Standard</div></div>
+            <div class="desk-unit free" onclick="selectDesk(this,'A-13')"><div class="desk-icon">🖥</div><div class="desk-id">A-13</div><div class="tooltip">A-13 · Dual Monitor</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button class="btn-next" onclick="nextStep(3)">Review Booking <span>→</span></button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Confirm -->
+    <div class="step-panel" id="step-4">
+      <div class="confirm-card">
+        <div class="confirm-header">
+          <div class="confirm-icon">🖥</div>
+          <div>
+            <div class="confirm-title">Individual Desk — A-09</div>
+            <div class="confirm-sub">Floor 3, Zone A · Dual Monitor &amp; Window</div>
+          </div>
+        </div>
+        <div class="confirm-rows">
+          <div class="confirm-row">
+            <span class="cr-label">Date</span>
+            <span class="cr-value" id="cr-date">Tuesday, 17 March 2026</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Time</span>
+            <span class="cr-value">10:00 AM — 1:00 PM</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Duration</span>
+            <span class="cr-value">3 hours</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Floor</span>
+            <span class="cr-value">Floor 3 — Main</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Desk ID</span>
+            <span class="cr-value">A-09</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Status</span>
+            <span class="cr-badge badge-green">✓ Available</span>
+          </div>
+          <div class="confirm-row">
+            <span class="cr-label">Booked for</span>
+            <span class="cr-value">Anurag</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:8px;">
+        <label class="form-label">Notes (optional)</label>
+        <textarea class="notes-area" placeholder="Any special requirements, e.g. need a second chair, vegetarian catering…"></textarea>
+      </div>
+      <div class="step-actions">
+        <button class="btn-back" onclick="prevStep(4)">← Back</button>
+        <button class="btn-next btn-confirm" onclick="confirmBooking()">✓ Confirm Booking</button>
+      </div>
+    </div>
+
+  </div><!-- /left-panel -->
+
+  <!-- RIGHT: Summary -->
+  <div class="right-panel">
+    <div class="summary-card">
+      <div class="summary-head">
+        <div class="sum-title">Booking Summary</div>
+        <div class="sum-sub">Updates as you fill in details</div>
+      </div>
+      <div class="summary-body">
+        <div class="sum-row">
+          <span class="sum-key">Resource</span>
+          <span class="sum-val" id="s-type">Individual Desk</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Date</span>
+          <span class="sum-val placeholder" id="s-date">Not selected</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Time</span>
+          <span class="sum-val" id="s-time">10:00 AM</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Duration</span>
+          <span class="sum-val" id="s-dur">3 hours</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Floor</span>
+          <span class="sum-val" id="s-floor">Floor 3</span>
+        </div>
+        <div class="sum-row">
+          <span class="sum-key">Desk</span>
+          <span class="sum-val highlight" id="s-desk">A-09</span>
+        </div>
+      </div>
+      <div class="mini-map">
+        <div class="mini-map-label">Floor Preview</div>
+        <div class="mini-grid">
+          <div class="mini-desk empty"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk taken"></div>
+          <div class="mini-desk empty"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk taken"></div>
+          <div class="mini-desk mine"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk taken"></div>
+          <div class="mini-desk empty"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk free"></div>
+          <div class="mini-desk taken"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen" style="max-width:600px;margin:0 auto;padding:80px 40px;">
+  <div class="success-icon">✓</div>
+  <h2 class="success-title">Booking <em style="font-style:italic;color:var(--green)">confirmed!</em></h2>
+  <p class="success-desc">Your desk has been reserved. You'll receive a confirmation notification shortly. See you at Desk A-09!</p>
+  <div class="success-ref">Booking Ref: WS-2026-03847</div>
+  <div class="success-actions">
+    <a href="#" class="btn-dark" style="font-family:var(--f-body)">View My Bookings</a>
+    <a href="booking.html" class="btn-ghost" style="font-family:var(--f-body)">Book Another</a>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 4;
+  const state = { type: 'Desk', time: '10:00 AM', dur: '3 hours', desk: 'A-09', floor: 'Floor 3' };
+
+  function goToStep(n) {
+    if (n > currentStep) return; // can only go back freely
+    setStep(n);
+  }
+
+  function nextStep(from) {
+    if (from < totalSteps) setStep(from + 1);
+  }
+
+  function prevStep(from) {
+    if (from > 1) setStep(from - 1);
+  }
+
+  function setStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.step-panel').forEach((p, i) => {
+      p.classList.toggle('show', i + 1 === n);
+    });
+    document.querySelectorAll('.step-tab').forEach((t, i) => {
+      t.classList.remove('active', 'done');
+      if (i + 1 === n) t.classList.add('active');
+      if (i + 1 < n) t.classList.add('done');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectType(card, type) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.type = type;
+    document.getElementById('s-type').textContent = type;
+    document.getElementById('s-type').classList.remove('placeholder');
+  }
+
+  function selectTime(slot, time) {
+    document.querySelectorAll('.time-slot:not(.unavailable)').forEach(s => s.classList.remove('selected'));
+    slot.classList.add('selected');
+    state.time = time;
+    document.getElementById('s-time').textContent = time;
+    updateSummary();
+  }
+
+  function selectDur(btn, dur) {
+    document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.dur = dur;
+    document.getElementById('s-dur').textContent = dur;
+  }
+
+  function selectDesk(unit, id) {
+    if (unit.classList.contains('taken') || unit.classList.contains('empty')) return;
+    document.querySelectorAll('.desk-unit.mine').forEach(d => {
+      d.classList.remove('mine');
+      d.classList.add('free');
+    });
+    unit.classList.remove('free');
+    unit.classList.add('mine');
+    state.desk = id;
+    const el = document.getElementById('s-desk');
+    el.textContent = id;
+    el.classList.remove('placeholder');
+  }
+
+  function switchFloor(btn, zone) {
+    document.querySelectorAll('.floor-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector('.map-label').textContent = `Floor 3 — Zone ${zone}`;
+  }
+
+  function toggleChip(chip) {
+    chip.classList.toggle('active');
+  }
+
+  function updateSummary() {
+    const floor = document.getElementById('booking-floor')?.value || 'Floor 3';
+    state.floor = floor;
+    document.getElementById('s-floor').textContent = floor;
+    const date = document.getElementById('booking-date')?.value;
+    if (date) {
+      const d = new Date(date + 'T00:00:00');
+      const formatted = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+      document.getElementById('s-date').textContent = formatted;
+      document.getElementById('s-date').classList.remove('placeholder');
+      document.getElementById('cr-date').textContent = formatted;
+    }
+  }
+
+  function confirmBooking() {
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Init summary
+  updateSummary();
+  document.getElementById('booking-date').addEventListener('change', updateSummary);
+  document.getElementById('booking-floor').addEventListener('change', updateSummary);
+</script>
+</body>
+</html>

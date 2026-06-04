@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard — WorkSpace Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#F7F5F2; --white:#FFFFFF; --ink:#1A1612; --ink-2:#6B6560; --ink-3:#A09A94;
+      --border:#E8E4DF; --border-2:#D8D2CB;
+      --accent:#2563EB; --accent-s:#EEF3FE; --accent-h:#1D4ED8;
+      --green:#16A34A; --green-s:#F0FDF4;
+      --amber:#D97706; --amber-s:#FFFBEB;
+      --red:#DC2626; --red-s:#FEF2F2;
+      --f-display:'Playfair Display',Georgia,serif;
+      --f-body:'Outfit',sans-serif;
+    }
+    html,body{height:100%;}
+    body{font-family:var(--f-body);background:var(--bg);color:var(--ink);display:flex;overflow-x:hidden;}
+    a{text-decoration:none;color:inherit;}
+
+    /* SIDEBAR */
+    .sidebar{width:230px;min-height:100vh;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:50;overflow-y:auto;}
+    .sb-logo{display:flex;align-items:center;gap:10px;padding:22px 18px;border-bottom:1px solid var(--border);}
+    .logo-mark{width:32px;height:32px;border-radius:9px;background:var(--ink);display:flex;align-items:center;justify-content:center;}
+    .logo-mark svg{width:14px;height:14px;fill:white;}
+    .logo-name{font-family:var(--f-display);font-size:17px;font-weight:600;letter-spacing:-.3px;}
+    .logo-name span{color:var(--accent);}
+    .sb-section{padding:14px 10px 6px;}
+    .sb-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:0 8px;margin-bottom:5px;}
+    .sb-link{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;font-size:13px;font-weight:400;color:var(--ink-2);cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;font-family:var(--f-body);width:100%;text-align:left;}
+    .sb-link:hover{background:var(--bg);color:var(--ink);}
+    .sb-link.active{background:var(--accent-s);color:var(--accent);font-weight:500;}
+    .sb-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;background:var(--bg);flex-shrink:0;}
+    .sb-link.active .sb-icon{background:rgba(37,99,235,.15);}
+    .sb-badge{margin-left:auto;background:var(--accent-s);color:var(--accent);font-size:10px;font-weight:600;padding:2px 7px;border-radius:100px;}
+    .sb-footer{margin-top:auto;padding:14px 10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;}
+    .sb-user:hover{background:var(--bg);}
+    .sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-s);border:1px solid rgba(37,99,235,.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);flex-shrink:0;}
+    .sb-uname{font-size:13px;font-weight:500;}
+    .sb-urole{font-size:11px;color:var(--ink-3);font-weight:300;}
+
+    /* MAIN */
+    .main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-y:auto;}
+
+    /* TOPBAR */
+    .topbar{background:rgba(247,245,242,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:40;}
+    .tb-left{display:flex;flex-direction:column;}
+    .tb-title{font-family:var(--f-display);font-size:18px;font-weight:500;}
+    .tb-title em{font-style:italic;color:var(--accent);}
+    .tb-date{font-size:11px;color:var(--ink-3);margin-top:1px;}
+    .tb-right{display:flex;align-items:center;gap:10px;}
+    .tb-btn{display:flex;align-items:center;gap:7px;background:var(--accent);color:#fff;font-size:13px;font-weight:500;padding:9px 16px;border-radius:9px;font-family:var(--f-body);cursor:pointer;border:none;transition:background .2s;}
+    .tb-btn:hover{background:var(--accent-h);}
+    .tb-icon{width:36px;height:36px;border-radius:9px;background:var(--white);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative;}
+    .notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1px solid var(--white);}
+
+    /* CONTENT */
+    .content{padding:28px 32px 60px;}
+
+    /* WELCOME BANNER */
+    .welcome-banner{background:var(--ink);border-radius:18px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;overflow:hidden;position:relative;}
+    .welcome-banner::before{content:'';position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%);}
+    .wb-text{position:relative;}
+    .wb-eyebrow{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;}
+    .wb-title{font-family:var(--f-display);font-size:26px;font-weight:500;color:#fff;margin-bottom:6px;}
+    .wb-title em{font-style:italic;color:#93B4FF;}
+    .wb-sub{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;}
+    .wb-actions{display:flex;gap:10px;position:relative;}
+    .wb-btn-p{background:#fff;color:var(--ink);font-size:13px;font-weight:500;padding:11px 20px;border-radius:10px;font-family:var(--f-body);cursor:pointer;border:none;transition:opacity .2s;}
+    .wb-btn-p:hover{opacity:.85;}
+    .wb-btn-s{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);font-size:13px;font-weight:400;padding:11px 20px;border-radius:10px;border:1px solid rgba(255,255,255,.15);font-family:var(--f-body);cursor:pointer;transition:background .2s;}
+    .wb-btn-s:hover{background:rgba(255,255,255,.15);}
+
+    /* STAT ROW */
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+    .stat-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px 22px;}
+    .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .sc-label{font-size:12px;color:var(--ink-3);}
+    .sc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+    .sc-val{font-family:var(--f-display);font-size:32px;font-weight:500;line-height:1;margin-bottom:6px;}
+    .sc-sub{font-size:12px;color:var(--ink-3);font-weight:300;}
+
+    /* GRID */
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+    .grid-3-2{display:grid;grid-template-columns:3fr 2fr;gap:20px;margin-bottom:20px;}
+
+    /* CARD */
+    .card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+    .card-title{font-size:14px;font-weight:500;}
+    .card-action{font-size:12px;color:var(--accent);font-weight:500;cursor:pointer;border:none;background:none;font-family:var(--f-body);}
+    .card-action:hover{text-decoration:underline;}
+
+    /* UPCOMING BOOKINGS */
+    .booking-list{padding:4px 0;}
+    .booking-item{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);transition:background .15s;cursor:default;}
+    .booking-item:last-child{border-bottom:none;}
+    .booking-item:hover{background:#FDFCFB;}
+    .bi-date{width:44px;height:44px;border-radius:10px;background:var(--accent-s);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+    .bi-day{font-size:16px;font-weight:600;color:var(--accent);line-height:1;}
+    .bi-mon{font-size:9px;font-weight:500;color:rgba(37,99,235,.6);text-transform:uppercase;letter-spacing:.05em;}
+    .bi-info{flex:1;}
+    .bi-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;}
+    .bi-detail{font-size:11px;color:var(--ink-3);font-weight:300;}
+    .bi-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+    .badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;}
+    .badge-green{background:var(--green-s);color:var(--green);}
+    .badge-blue{background:var(--accent-s);color:var(--accent);}
+    .badge-amber{background:var(--amber-s);color:var(--amber);}
+    .badge-gray{background:var(--bg);color:var(--ink-3);border:1px solid var(--border);}
+    .bi-time{font-size:11px;color:var(--ink-3);}
+    .bi-cancel{font-size:11px;color:var(--red);cursor:pointer;font-weight:500;}
+    .bi-cancel:hover{text-decoration:underline;}
+
+    /* QUICK ACTIONS */
+    .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;}
+    .qa-btn{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;text-align:left;font-family:var(--f-body);}
+    .qa-btn:hover{border-color:var(--border-2);background:#F0EDE9;}
+    .qa-icon{font-size:20px;}
+    .qa-label{font-size:13px;font-weight:500;color:var(--ink);}
+    .qa-desc{font-size:11px;color:var(--ink-3);font-weight:300;}
+
+    /* FLOOR MINI MAP */
+    .map-preview{padding:16px 20px;}
+    .mp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .mp-title{font-size:12px;font-weight:500;color:var(--ink-2);}
+    .mp-sub{font-size:11px;color:var(--ink-3);}
+    .mp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:10px;}
+    .mp-desk{aspect-ratio:1;border-radius:6px;}
+    .mp-desk.free{background:var(--green-s);border:1px solid #BBF7D0;}
+    .mp-desk.taken{background:var(--red-s);border:1px solid #FECACA;}
+    .mp-desk.mine{background:var(--accent);border:1px solid var(--accent);}
+    .mp-desk.empty{background:var(--bg);border:1px solid var(--border);}
+    .mp-legend{display:flex;gap:12px;}
+    .mp-leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink-3);}
+    .mp-dot{width:8px;height:8px;border-radius:2px;}
+
+    /* RECENT ACTIVITY */
+    .activity-list{padding:4px 0;}
+    .act-item{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);}
+    .act-item:last-child{border-bottom:none;}
+    .act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+    .act-text{font-size:13px;color:var(--ink-2);font-weight:300;line-height:1.45;flex:1;}
+    .act-text strong{font-weight:500;color:var(--ink);}
+    .act-time{font-size:11px;color:var(--ink-3);flex-shrink:0;padding-top:1px;}
+
+    /* OFFICE NOTICE */
+    .notice-card{background:var(--amber-s);border:1px solid rgba(217,119,6,.2);border-radius:14px;padding:16px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px;}
+    .notice-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+    .notice-title{font-size:13px;font-weight:500;color:var(--amber);margin-bottom:4px;}
+    .notice-text{font-size:12px;color:rgba(120,80,0,.7);font-weight:300;line-height:1.5;}
+
+    @media(max-width:860px){.sidebar{display:none;}.main{margin-left:0;}}
+    @media(max-width:640px){.content{padding:20px 16px;}.topbar{padding:0 16px;}.stat-row{grid-template-columns:1fr;}.grid-2,.grid-3-2{grid-template-columns:1fr;}.welcome-banner{flex-direction:column;gap:20px;}.wb-actions{flex-direction:column;}}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></div>
+    <span class="logo-name">WorkSpace<span>Pro</span></span>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">My Space</div>
+    <button class="sb-link active" onclick="setActive(this)"><span class="sb-icon">🏠</span>Dashboard</button>
+    <button class="sb-link" onclick="setActive(this)"><span class="sb-icon">📅</span>My Bookings<span class="sb-badge">3</span></button>
+    <button class="sb-link" onclick="window.location.href='booking.html'"><span class="sb-icon">➕</span>New Booking</button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Office</div>
+    <button class="sb-link" onclick="setActive(this)"><span class="sb-icon">🗺</span>Floor Map</button>
+    <button class="sb-link" onclick="setActive(this)"><span class="sb-icon">📋</span>Resources</button>
+    <button class="sb-link" onclick="setActive(this)"><span class="sb-icon">🔔</span>Notifications</button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Account</div>
+    <button class="sb-link" onclick="setActive(this)"><span class="sb-icon">⚙️</span>Settings</button>
+    <button class="sb-link" onclick="window.location.href='login.html'"><span class="sb-icon">🚪</span>Logout</button>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">A</div>
+      <div><div class="sb-uname">Anurag</div><div class="sb-urole">Employee · Floor 3</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-title">My <em>Dashboard</em></div>
+      <div class="tb-date">Monday, 16 March 2026</div>
+    </div>
+    <div class="tb-right">
+      <button class="tb-btn" onclick="window.location.href='booking.html'">+ Book a Desk</button>
+      <div class="tb-icon">🔔<span class="notif-dot"></span></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Welcome banner -->
+    <div class="welcome-banner">
+      <div class="wb-text">
+        <div class="wb-eyebrow">Good morning 👋</div>
+        <h2 class="wb-title">Welcome back, <em>Anurag</em></h2>
+        <p class="wb-sub">You have 3 upcoming bookings this week. Desk A-09 is reserved for today.</p>
+      </div>
+      <div class="wb-actions">
+        <button class="wb-btn-p" onclick="window.location.href='booking.html'">Book a Resource</button>
+        <button class="wb-btn-s" onclick="window.location.href='my-bookings.html'">View My Bookings</button>
+      </div>
+    </div>
+
+    <!-- Office notice -->
+    <div class="notice-card">
+      <div class="notice-icon">📢</div>
+      <div>
+        <div class="notice-title">Office Notice</div>
+        <div class="notice-text">Floor 2 Zone B desks are unavailable this week due to maintenance. Please book from Floor 3 or Floor 4.</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="sc-top"><span class="sc-label">This Week's Bookings</span><span class="sc-icon" style="background:var(--accent-s)">📅</span></div>
+        <div class="sc-val">3</div>
+        <div class="sc-sub">2 confirmed · 1 pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-top"><span class="sc-label">Hours Booked</span><span class="sc-icon" style="background:var(--green-s)">⏱</span></div>
+        <div class="sc-val">11<span style="font-size:16px;font-family:var(--f-body);font-weight:300;color:var(--ink-3)">hrs</span></div>
+        <div class="sc-sub">Across 3 resources</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-top"><span class="sc-label">Favourite Desk</span><span class="sc-icon" style="background:var(--amber-s)">⭐</span></div>
+        <div class="sc-val" style="font-size:22px;padding-top:4px;">A-09</div>
+        <div class="sc-sub">Floor 3 · Booked 6 times</div>
+      </div>
+    </div>
+
+    <!-- Upcoming + Quick Actions -->
+    <div class="grid-3-2">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Upcoming Bookings</span>
+          <button class="card-action" onclick="window.location.href='my-bookings.html'">View all →</button>
+        </div>
+        <div class="booking-list">
+          <div class="booking-item">
+            <div class="bi-date"><div class="bi-day">16</div><div class="bi-mon">Mar</div></div>
+            <div class="bi-info">
+              <div class="bi-title">Desk A-09 — Floor 3</div>
+              <div class="bi-detail">Dual Monitor · Zone A · Window seat</div>
+            </div>
+            <div class="bi-right">
+              <span class="badge badge-blue">Today</span>
+              <span class="bi-time">10:00 AM – 1:00 PM</span>
+              <span class="bi-cancel" onclick="cancelBooking(this)">Cancel</span>
+            </div>
+          </div>
+          <div class="booking-item">
+            <div class="bi-date" style="background:var(--green-s)"><div class="bi-day" style="color:var(--green)">18</div><div class="bi-mon" style="color:rgba(22,163,74,.6)">Mar</div></div>
+            <div class="bi-info">
+              <div class="bi-title">Meeting Room 2 — Floor 1</div>
+              <div class="bi-detail">Capacity: 6 · Projector · Whiteboard</div>
+            </div>
+            <div class="bi-right">
+              <span class="badge badge-green">Confirmed</span>
+              <span class="bi-time">2:00 PM – 4:00 PM</span>
+              <span class="bi-cancel" onclick="cancelBooking(this)">Cancel</span>
+            </div>
+          </div>
+          <div class="booking-item">
+            <div class="bi-date" style="background:var(--amber-s)"><div class="bi-day" style="color:var(--amber)">20</div><div class="bi-mon" style="color:rgba(217,119,6,.6)">Mar</div></div>
+            <div class="bi-info">
+              <div class="bi-title">Focus Pod 1 — Floor 4</div>
+              <div class="bi-detail">Quiet zone · No interruptions · AC</div>
+            </div>
+            <div class="bi-right">
+              <span class="badge badge-amber">Pending</span>
+              <span class="bi-time">9:00 AM – 11:00 AM</span>
+              <span class="bi-cancel" onclick="cancelBooking(this)">Cancel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Quick Actions</span></div>
+        <div class="qa-grid">
+          <button class="qa-btn" onclick="window.location.href='booking.html'">
+            <span class="qa-icon">🖥</span>
+            <span class="qa-label">Book a Desk</span>
+            <span class="qa-desc">Find available desks</span>
+          </button>
+          <button class="qa-btn" onclick="window.location.href='booking.html'">
+            <span class="qa-icon">📋</span>
+            <span class="qa-label">Book a Room</span>
+            <span class="qa-desc">Meeting spaces</span>
+          </button>
+          <button class="qa-btn" onclick="window.location.href='my-bookings.html'">
+            <span class="qa-icon">📅</span>
+            <span class="qa-label">My Bookings</span>
+            <span class="qa-desc">View &amp; manage</span>
+          </button>
+          <button class="qa-btn" onclick="setActive(document.querySelectorAll('.sb-link')[4])">
+            <span class="qa-icon">🗺</span>
+            <span class="qa-label">Floor Map</span>
+            <span class="qa-desc">Live availability</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floor map preview + Activity -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><span class="card-title">Floor 3 — Live Availability</span><button class="card-action">Full map →</button></div>
+        <div class="map-preview">
+          <div class="mp-head">
+            <span class="mp-title">Zone A</span>
+            <span class="mp-sub">14 / 20 available</span>
+          </div>
+          <div class="mp-grid">
+            <div class="mp-desk empty"></div><div class="mp-desk free"></div><div class="mp-desk free"></div>
+            <div class="mp-desk taken"></div><div class="mp-desk empty"></div><div class="mp-desk free"></div><div class="mp-desk free"></div>
+            <div class="mp-desk free"></div><div class="mp-desk taken"></div><div class="mp-desk mine"></div>
+            <div class="mp-desk free"></div><div class="mp-desk free"></div><div class="mp-desk taken"></div><div class="mp-desk empty"></div>
+            <div class="mp-desk free"></div><div class="mp-desk free"></div><div class="mp-desk taken"></div>
+            <div class="mp-desk empty"></div><div class="mp-desk free"></div><div class="mp-desk free"></div>
+          </div>
+          <div class="mp-legend">
+            <div class="mp-leg"><span class="mp-dot" style="background:var(--green-s);border:1px solid #BBF7D0"></span>Free</div>
+            <div class="mp-leg"><span class="mp-dot" style="background:var(--red-s);border:1px solid #FECACA"></span>Booked</div>
+            <div class="mp-leg"><span class="mp-dot" style="background:var(--accent)"></span>Yours</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Recent Activity</span></div>
+        <div class="activity-list">
+          <div class="act-item"><span class="act-dot" style="background:var(--green)"></span><div class="act-text">You booked <strong>Desk A-09</strong> for today 10AM–1PM</div><span class="act-time">2h ago</span></div>
+          <div class="act-item"><span class="act-dot" style="background:var(--accent)"></span><div class="act-text"><strong>Meeting Room 2</strong> confirmed for Mar 18</div><span class="act-time">Yesterday</span></div>
+          <div class="act-item"><span class="act-dot" style="background:var(--amber)"></span><div class="act-text"><strong>Focus Pod 1</strong> booking is pending approval</div><span class="act-time">2d ago</span></div>
+          <div class="act-item"><span class="act-dot" style="background:var(--red)"></span><div class="act-text">You cancelled <strong>Desk B-04</strong> booking</div><span class="act-time">3d ago</span></div>
+          <div class="act-item"><span class="act-dot" style="background:var(--green)"></span><div class="act-text">You booked <strong>Desk A-09</strong> for Mar 10</div><span class="act-time">5d ago</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function setActive(btn) {
+    document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function cancelBooking(el) {
+    if(confirm('Cancel this booking?')) {
+      el.closest('.booking-item').style.opacity = '0.4';
+      el.closest('.booking-item').style.pointerEvents = 'none';
+      el.closest('.booking-item').querySelector('.badge').textContent = 'Cancelled';
+      el.closest('.booking-item').querySelector('.badge').className = 'badge badge-gray';
+    }
+  }
+</script>
+</body>
+</html>
