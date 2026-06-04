@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — WorkSpace Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F2; --white: #FFFFFF; --ink: #1A1612; --ink-2: #6B6560; --ink-3: #A09A94;
+      --border: #E8E4DF; --border-2: #D8D2CB;
+      --accent: #2563EB; --accent-s: #EEF3FE; --accent-h: #1D4ED8;
+      --green: #16A34A; --green-s: #F0FDF4;
+      --red: #DC2626; --red-s: #FEF2F2;
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-body: 'Outfit', sans-serif;
+    }
+    html, body { height: 100%; }
+    body { font-family: var(--f-body); background: var(--bg); color: var(--ink); display: flex; flex-direction: column; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── LAYOUT ── */
+    .page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+    /* ── LEFT PANEL ── */
+    .left {
+      background: var(--ink); position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 48px;
+    }
+    /* subtle grid pattern */
+    .left::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    /* accent glow */
+    .left::after {
+      content: ''; position: absolute; bottom: -100px; left: -100px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .left-logo { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+    .logo-mark { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; }
+    .logo-mark svg { width: 15px; height: 15px; fill: white; }
+    .logo-name { font-family: var(--f-display); font-size: 18px; font-weight: 600; color: #fff; letter-spacing: -.3px; }
+    .logo-name span { color: #93B4FF; }
+
+    .left-content { position: relative; z-index: 1; }
+    .left-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 16px; }
+    .left-title { font-family: var(--f-display); font-size: clamp(32px, 3.5vw, 52px); font-weight: 500; line-height: 1.1; letter-spacing: -.5px; color: #fff; margin-bottom: 20px; }
+    .left-title em { font-style: italic; color: #93B4FF; }
+    .left-desc { font-size: 15px; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,.55); max-width: 360px; }
+
+    .left-stats { display: flex; gap: 32px; position: relative; z-index: 1; }
+    .lstat { }
+    .lstat-n { font-family: var(--f-display); font-size: 28px; font-weight: 500; color: #fff; }
+    .lstat-n span { color: #93B4FF; }
+    .lstat-l { font-size: 12px; color: rgba(255,255,255,.4); font-weight: 300; margin-top: 3px; }
+
+    /* floating card on left */
+    .preview-card {
+      position: absolute; bottom: 120px; right: -20px; z-index: 2;
+      background: rgba(255,255,255,.07); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.12); border-radius: 16px;
+      padding: 16px 20px; width: 220px;
+    }
+    .pc-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .pc-avatar { width: 32px; height: 32px; border-radius: 50%; background: #93B4FF; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--ink); flex-shrink: 0; }
+    .pc-name { font-size: 13px; font-weight: 500; color: #fff; }
+    .pc-role { font-size: 11px; color: rgba(255,255,255,.45); }
+    .pc-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(22,163,74,.2); border: 1px solid rgba(22,163,74,.3); color: #4ADE80; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 100px; }
+    .pc-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── RIGHT PANEL ── */
+    .right {
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 40px; background: var(--bg);
+    }
+    .form-wrap { width: 100%; max-width: 400px; }
+
+    .form-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+    .form-title { font-family: var(--f-display); font-size: 34px; font-weight: 500; letter-spacing: -.4px; margin-bottom: 6px; }
+    .form-title em { font-style: italic; color: var(--accent); }
+    .form-sub { font-size: 14px; color: var(--ink-2); font-weight: 300; margin-bottom: 36px; }
+
+    /* Role selector */
+    .role-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 28px; }
+    .role-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px 8px; border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--white); cursor: pointer; transition: all .15s;
+      font-family: var(--f-body);
+    }
+    .role-btn:hover { border-color: var(--border-2); }
+    .role-btn.active { border-color: var(--accent); background: var(--accent-s); }
+    .role-icon { font-size: 20px; }
+    .role-name { font-size: 11px; font-weight: 500; color: var(--ink-2); }
+    .role-btn.active .role-name { color: var(--accent); }
+
+    /* Form fields */
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-2); margin-bottom: 7px; letter-spacing: .02em; }
+    .form-input {
+      width: 100%; background: var(--white); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; font-size: 14px; font-family: var(--f-body);
+      color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+    .form-input::placeholder { color: var(--ink-3); }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; cursor: pointer; color: var(--ink-3); user-select: none; }
+
+    /* Remember / forgot */
+    .form-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .check-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+    .check-label input { accent-color: var(--accent); width: 14px; height: 14px; }
+    .forgot-link { font-size: 13px; color: var(--accent); font-weight: 500; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%; background: var(--ink); color: #fff; font-size: 15px; font-weight: 500;
+      font-family: var(--f-body); padding: 14px; border-radius: 11px; border: none;
+      cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s;
+      box-shadow: 0 4px 16px rgba(26,22,18,.18); margin-bottom: 20px;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,22,18,.28); }
+
+    /* Divider */
+    .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-text { font-size: 12px; color: var(--ink-3); font-weight: 300; }
+
+    /* SSO buttons */
+    .sso-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+    .sso-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: 11px; font-size: 13px; font-weight: 400; color: var(--ink-2);
+      cursor: pointer; font-family: var(--f-body); transition: border-color .2s, color .2s;
+    }
+    .sso-btn:hover { border-color: var(--border-2); color: var(--ink); }
+
+    /* Footer text */
+    .form-footer { text-align: center; font-size: 13px; color: var(--ink-3); font-weight: 300; }
+    .form-footer a { color: var(--accent); font-weight: 500; }
+    .form-footer a:hover { text-decoration: underline; }
+
+    /* Error / success */
+    .alert { display: none; padding: 11px 14px; border-radius: 10px; font-size: 13px; font-weight: 400; margin-bottom: 16px; }
+    .alert.show { display: flex; align-items: center; gap: 8px; }
+    .alert-error { background: var(--red-s); border: 1px solid #FECACA; color: var(--red); }
+    .alert-success { background: var(--green-s); border: 1px solid #BBF7D0; color: var(--green); }
+
+    @media(max-width: 860px) {
+      .page { grid-template-columns: 1fr; }
+      .left { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+      </div>
+      <span class="logo-name">WorkSpace<span>Pro</span></span>
+    </div>
+
+    <div class="left-content">
+      <div class="left-eyebrow">Smart Office Management</div>
+      <h1 class="left-title">Your office,<br><em>intelligently</em><br>managed.</h1>
+      <p class="left-desc">Book desks, manage resources, and track utilization — all in one place, in real time.</p>
+    </div>
+
+    <div class="preview-card">
+      <div class="pc-row">
+        <div class="pc-avatar">A</div>
+        <div><div class="pc-name">Anurag</div><div class="pc-role">Employee · Floor 3</div></div>
+      </div>
+      <div class="pc-badge"><span class="pc-dot"></span>Desk A-09 booked</div>
+    </div>
+
+    <div class="left-stats">
+      <div class="lstat"><div class="lstat-n">3<span>.</span></div><div class="lstat-l">Portals</div></div>
+      <div class="lstat"><div class="lstat-n">0<span>.</span></div><div class="lstat-l">Conflicts</div></div>
+      <div class="lstat"><div class="lstat-n">100<span>%</span></div><div class="lstat-l">Real-time</div></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="form-wrap">
+      <div class="form-eyebrow">Welcome back</div>
+      <h2 class="form-title">Sign <em>in</em></h2>
+      <p class="form-sub">Choose your role and enter your credentials.</p>
+
+      <!-- Role selector -->
+      <div class="role-select">
+        <button class="role-btn active" onclick="selectRole(this,'Employee')">
+          <span class="role-icon">👤</span>
+          <span class="role-name">Employee</span>
+        </button>
+        <button class="role-btn" onclick="selectRole(this,'Maintenance')">
+          <span class="role-icon">🔧</span>
+          <span class="role-name">Maintenance</span>
+        </button>
+        <button class="role-btn" onclick="selectRole(this,'Admin')">
+          <span class="role-icon">⚙️</span>
+          <span class="role-name">Admin</span>
+        </button>
+      </div>
+
+      <!-- Error alert -->
+      <div class="alert alert-error" id="alertError">⚠ Invalid email or password. Please try again.</div>
+      <div class="alert alert-success" id="alertSuccess">✓ Login successful! Redirecting…</div>
+
+      <!-- Form -->
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="email" placeholder="you@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <input type="password" class="form-input" id="password" placeholder="Enter your password"/>
+          <span class="input-icon" onclick="togglePw()" id="pwIcon">👁</span>
+        </div>
+      </div>
+      <div class="form-meta">
+        <label class="check-label">
+          <input type="checkbox" checked/> Remember me
+        </label>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button class="btn-submit" onclick="handleLogin()">Sign In →</button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or continue with</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="sso-row">
+        <button class="sso-btn">🔵 Google</button>
+        <button class="sso-btn">🪟 Microsoft</button>
+      </div>
+
+      <p class="form-footer">Don't have an account? <a href="#">Register here</a></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedRole = 'Employee';
+
+  function selectRole(btn, role) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedRole = role;
+  }
+
+  function togglePw() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('pwIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.textContent = '🙈'; }
+    else { input.type = 'password'; icon.textContent = '👁'; }
+  }
+
+  function handleLogin() {
+    const email = document.getElementById('email').value;
+    const pw = document.getElementById('password').value;
+    document.getElementById('alertError').classList.remove('show');
+    document.getElementById('alertSuccess').classList.remove('show');
+
+    if (!email || !pw) {
+      document.getElementById('alertError').textContent = '⚠ Please fill in all fields.';
+      document.getElementById('alertError').classList.add('show');
+      return;
+    }
+    // Demo: any input works
+    document.getElementById('alertSuccess').classList.add('show');
+    setTimeout(() => {
+      if (selectedRole === 'Admin') window.location.href = 'admin.html';
+      else if (selectedRole === 'Employee') window.location.href = 'employee.html';
+      else window.location.href = 'index.html';
+    }, 1200);
+  }
+</script>
+</body>
+</html>

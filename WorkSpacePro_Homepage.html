@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkSpace Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F7F5F2;
+      --white:    #FFFFFF;
+      --ink:      #1A1612;
+      --ink-2:    #6B6560;
+      --ink-3:    #A09A94;
+      --border:   #E8E4DF;
+      --accent:   #2563EB;
+      --accent-s: #EEF3FE;
+      --green:    #16A34A;
+      --green-s:  #F0FDF4;
+      --amber:    #D97706;
+      --amber-s:  #FFFBEB;
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-body:    'Outfit', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--f-body); background: var(--bg); color: var(--ink); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 40px;
+      transition: background .3s, box-shadow .3s;
+    }
+    nav.scrolled {
+      background: rgba(247,245,242,.94);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-inner {
+      max-width: 1160px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--ink); display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mark svg { width: 16px; height: 16px; fill: white; }
+    .logo-name { font-family: var(--f-display); font-size: 18px; font-weight: 600; letter-spacing: -.3px; }
+    .logo-name span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-links a { font-size: 14px; font-weight: 400; color: var(--ink-2); padding: 7px 14px; border-radius: 8px; transition: color .2s, background .2s; }
+    .nav-links a:hover { color: var(--ink); background: var(--border); }
+    .nav-cta { background: var(--ink) !important; color: #fff !important; font-weight: 500 !important; border-radius: 10px !important; }
+    .nav-cta:hover { opacity: .8; background: var(--ink) !important; }
+    .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }
+    .menu-btn span { display: block; width: 22px; height: 1.5px; background: var(--ink); border-radius: 2px; }
+    .mobile-menu { display: none; flex-direction: column; background: var(--white); border-top: 1px solid var(--border); padding: 12px 40px 20px; }
+    .mobile-menu a { color: var(--ink-2); padding: 12px 0; font-size: 15px; border-bottom: 1px solid var(--border); }
+    .mobile-menu.open { display: flex; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      max-width: 1160px; margin: 0 auto;
+      padding: 160px 40px 96px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-2); margin-bottom: 24px;
+    }
+    .hero-eyebrow::before { content:''; display:block; width:20px; height:1px; background:var(--ink-3); }
+    .hero-title {
+      font-family: var(--f-display);
+      font-size: clamp(40px, 4.5vw, 62px);
+      font-weight: 500; line-height: 1.1; letter-spacing: -.5px;
+      margin-bottom: 22px;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-desc { font-size: 16px; line-height: 1.75; color: var(--ink-2); margin-bottom: 40px; font-weight: 300; max-width: 400px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .btn-dark {
+      background: var(--ink); color: #fff; font-size: 14px; font-weight: 500;
+      font-family: var(--f-body); padding: 13px 26px; border-radius: 10px;
+      display: inline-block; transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 16px rgba(26,22,18,.18);
+    }
+    .btn-dark:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,22,18,.26); }
+    .btn-ghost {
+      font-size: 14px; font-weight: 400; color: var(--ink-2);
+      padding: 13px 22px; border-radius: 10px; border: 1px solid var(--border);
+      display: inline-block; transition: border-color .2s, color .2s;
+    }
+    .btn-ghost:hover { border-color: var(--ink-3); color: var(--ink); }
+
+    /* ── BOOKING CARD ── */
+    .hero-visual { position: relative; }
+    .status-pill {
+      position: absolute; top: -16px; right: 20px; z-index: 3;
+      background: var(--white); border: 1px solid var(--border); border-radius: 100px;
+      padding: 8px 14px; display: flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 500; color: var(--ink);
+      box-shadow: 0 4px 16px rgba(26,22,18,.08);
+    }
+    .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulseAnim 2s infinite; }
+    @keyframes pulseAnim { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+    .booking-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 28px;
+      box-shadow: 0 20px 60px rgba(26,22,18,.07), 0 4px 12px rgba(26,22,18,.04);
+    }
+    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+    .card-ttl { font-size: 13px; font-weight: 500; }
+    .card-sub { font-size: 12px; color: var(--ink-3); }
+    .desk-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 20px; }
+    .desk {
+      aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 10px; font-weight: 600;
+      border: 1px solid transparent; cursor: default; transition: transform .15s;
+    }
+    .desk:hover { transform: scale(1.06); }
+    .desk.free  { background: var(--green-s); border-color: #BBF7D0; color: var(--green); }
+    .desk.taken { background: #FEF2F2; border-color: #FECACA; color: #DC2626; }
+    .desk.mine  { background: var(--accent-s); border-color: #BFDBFE; color: var(--accent); }
+    .desk.empty { background: var(--bg); border-color: var(--border); }
+    .card-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+    .leg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-2); }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── STATS ── */
+    .stats {
+      position: relative; z-index: 1; max-width: 1160px; margin: 0 auto;
+      padding: 0 40px 80px; display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid var(--border);
+    }
+    .stat { padding: 32px 24px; border-right: 1px solid var(--border); }
+    .stat:last-child { border-right: none; }
+    .stat-n { font-family: var(--f-display); font-size: 44px; font-weight: 500; line-height: 1; }
+    .stat-n em { font-style: normal; color: var(--accent); }
+    .stat-l { font-size: 13px; color: var(--ink-2); margin-top: 6px; font-weight: 300; }
+
+    /* ── SECTIONS ── */
+    .section { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 80px 40px; }
+    .sec-alt { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .sec-alt .section { max-width: 1160px; margin: 0 auto; }
+    .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; }
+    .sec-title {
+      font-family: var(--f-display); font-size: clamp(28px, 3vw, 44px);
+      font-weight: 500; line-height: 1.15; letter-spacing: -.3px; margin-bottom: 52px;
+    }
+    .sec-title em { font-style: italic; color: var(--accent); }
+
+    /* ── FEATURES ── */
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .feat-card { background: var(--white); padding: 32px 28px; transition: background .2s; }
+    .feat-card:hover { background: #FDFCFB; }
+    .f-ico {
+      width: 40px; height: 40px; border-radius: 10px; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 18px; border: 1px solid var(--border);
+    }
+    .f-ttl { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+    .f-dsc { font-size: 13px; line-height: 1.65; color: var(--ink-2); font-weight: 300; }
+
+    /* ── STEPS ── */
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 48px; }
+    .step-bar { height: 4px; border-radius: 4px; background: var(--border); margin-bottom: 32px; position: relative; overflow: hidden; }
+    .step-bar::after { content:''; position:absolute; left:0; top:0; width:40%; height:100%; border-radius:4px; background: var(--accent); }
+    .s-num { font-family: var(--f-display); font-size: 52px; font-weight: 500; color: var(--border); line-height: 1; margin-bottom: 18px; }
+    .s-ttl { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
+    .s-dsc { font-size: 14px; line-height: 1.7; color: var(--ink-2); font-weight: 300; }
+
+    /* ── PORTALS ── */
+    .portal-wrap {
+      display: grid; grid-template-columns: 260px 1fr; gap: 2px;
+      background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .portal-side { background: var(--bg); padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .ptab {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px;
+      cursor: pointer; transition: background .15s; border: none; background: none;
+      font-family: var(--f-body); text-align: left; width: 100%;
+    }
+    .ptab:hover { background: rgba(255,255,255,.6); }
+    .ptab.active { background: var(--white); box-shadow: 0 2px 8px rgba(26,22,18,.06); }
+    .ptab-ico { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .ptab-lbl { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+    .ptab.active .ptab-lbl { color: var(--ink); }
+    .ptab-sub { font-size: 11px; color: var(--ink-3); }
+    .portal-body { background: var(--white); padding: 36px 40px; }
+    .pb-eye { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+    .pb-ttl { font-family: var(--f-display); font-size: 24px; font-weight: 500; margin-bottom: 24px; }
+    .pb-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .pb-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--ink-2); font-weight: 300; line-height: 1.5; }
+    .pb-chk { width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-top: 1px; }
+    .portal-panel { display: none; }
+    .portal-panel.show { display: block; }
+
+    /* ── CTA ── */
+    .cta-outer { position: relative; z-index:1; margin: 0 40px 80px; }
+    .cta-box {
+      background: var(--ink); border-radius: 24px; padding: 72px 80px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+      flex-wrap: wrap; overflow: hidden; position: relative;
+    }
+    .cta-box::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background: radial-gradient(ellipse at 80% 50%, rgba(37,99,235,.28) 0%, transparent 65%);
+    }
+    .cta-text { position: relative; }
+    .cta-text p { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 14px; }
+    .cta-text h2 { font-family: var(--f-display); font-size: clamp(26px, 3vw, 42px); font-weight: 500; color: #fff; line-height: 1.15; letter-spacing: -.3px; }
+    .cta-acts { position: relative; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .btn-white {
+      background: #fff; color: var(--ink); font-size: 14px; font-weight: 500;
+      font-family: var(--f-body); padding: 13px 26px; border-radius: 10px;
+      display: inline-block; transition: transform .2s; box-shadow: 0 4px 16px rgba(0,0,0,.18);
+    }
+    .btn-white:hover { transform: translateY(-1px); }
+    .btn-wout {
+      color: rgba(255,255,255,.55); font-size: 14px; padding: 13px 22px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.2); display: inline-block; transition: color .2s, border-color .2s;
+    }
+    .btn-wout:hover { color: #fff; border-color: rgba(255,255,255,.5); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index:1; max-width: 1160px; margin: 0 auto;
+      padding: 32px 40px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .foot-note { font-size: 13px; color: var(--ink-3); font-weight: 300; }
+
+    /* ── FADE ── */
+    .fade { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
+    .fade.in { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      .hero { grid-template-columns:1fr; gap:48px; padding-top:120px; }
+      .stats { grid-template-columns:1fr 1fr; }
+      .feat-grid { grid-template-columns:1fr 1fr; }
+      .steps { grid-template-columns:1fr; gap:32px; }
+      .portal-wrap { grid-template-columns:1fr; }
+      .portal-side { flex-direction:row; overflow-x:auto; padding:8px; }
+      .cta-box { padding:48px 36px; }
+      .cta-outer { margin:0 20px 60px; }
+    }
+    @media(max-width:600px){
+      nav { padding:0 20px; }
+      .nav-links { display:none; }
+      .menu-btn { display:flex; }
+      .hero, .section, footer { padding-left:24px; padding-right:24px; }
+      .feat-grid { grid-template-columns:1fr; }
+      .stats { grid-template-columns:1fr 1fr; }
+      .stat { padding:24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+      </div>
+      <span class="logo-name">WorkSpace<span>Pro</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#portals">Portals</a>
+      <a href="login.html" class="nav-cta" style="margin-left:10px;padding:9px 20px;">Get Started</a>
+    </div>
+    <button class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features" onclick="toggleMenu()">Features</a>
+    <a href="#how-it-works" onclick="toggleMenu()">How It Works</a>
+    <a href="#portals" onclick="toggleMenu()">Portals</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content fade">
+    <div class="hero-eyebrow">Hybrid Office Management</div>
+    <h1 class="hero-title">The smarter way<br>to run your <em>office</em></h1>
+    <p class="hero-desc">WorkSpace Pro gives employees, maintenance teams, and admins one seamless platform — to book desks, manage resources, and track utilization in real time.</p>
+    <div class="hero-btns">
+      <a href="login.html" class="btn-dark">Explore Portals</a>
+      <a href="#features" class="btn-ghost">See Features →</a>
+    </div>
+  </div>
+  <div class="hero-visual fade" style="transition-delay:.12s">
+    <div class="status-pill"><span class="pulse"></span>14 desks available now</div>
+    <div class="booking-card">
+      <div class="card-head">
+        <span class="card-ttl">Floor 3 — Zone A</span>
+        <span class="card-sub">Today, Mar 6</span>
+      </div>
+      <div class="desk-grid">
+        <div class="desk empty"></div>
+        <div class="desk free">✓</div>
+        <div class="desk free">✓</div>
+        <div class="desk taken">✗</div>
+        <div class="desk empty"></div>
+        <div class="desk free">✓</div>
+        <div class="desk taken">✗</div>
+        <div class="desk mine">★</div>
+        <div class="desk free">✓</div>
+        <div class="desk free">✓</div>
+        <div class="desk taken">✗</div>
+        <div class="desk empty"></div>
+        <div class="desk free">✓</div>
+        <div class="desk free">✓</div>
+        <div class="desk taken">✗</div>
+      </div>
+      <div class="card-legend">
+        <div class="leg"><span class="leg-dot" style="background:#16A34A"></span>Available</div>
+        <div class="leg"><span class="leg-dot" style="background:#DC2626"></span>Booked</div>
+        <div class="leg"><span class="leg-dot" style="background:#2563EB"></span>Yours</div>
+        <div class="leg"><span class="leg-dot" style="background:#D1C9BF"></span>Empty</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat fade"><div class="stat-n">3<em>.</em></div><div class="stat-l">Dedicated portals</div></div>
+  <div class="stat fade"><div class="stat-n">0<em>.</em></div><div class="stat-l">Double bookings</div></div>
+  <div class="stat fade"><div class="stat-n">100<em>%</em></div><div class="stat-l">Real-time sync</div></div>
+  <div class="stat fade"><div class="stat-n">∞<em>.</em></div><div class="stat-l">Scalable by design</div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="eyebrow">What we offer</div>
+  <h2 class="sec-title">Everything your office <em>needs</em></h2>
+  <div class="feat-grid">
+    <div class="feat-card fade"><div class="f-ico">⚡</div><div class="f-ttl">Real-Time Booking</div><p class="f-dsc">Instant reservations with live conflict detection. No double-bookings, guaranteed.</p></div>
+    <div class="feat-card fade"><div class="f-ico">🗺</div><div class="f-ttl">Floor Map View</div><p class="f-dsc">Interactive maps show available desks by zone, floor, or amenity at a glance.</p></div>
+    <div class="feat-card fade"><div class="f-ico">🧹</div><div class="f-ttl">Maintenance Queue</div><p class="f-dsc">Vacated desks are auto-queued for cleaning so every space is ready before the next arrival.</p></div>
+    <div class="feat-card fade"><div class="f-ico">📊</div><div class="f-ttl">Usage Analytics</div><p class="f-dsc">Admins see peak hours, utilization rates, and top resources on a clear dashboard.</p></div>
+    <div class="feat-card fade"><div class="f-ico">🔐</div><div class="f-ttl">Role-Based Access</div><p class="f-dsc">Three secure portals — each tailored to exactly who's using it.</p></div>
+    <div class="feat-card fade"><div class="f-ico">🔔</div><div class="f-ttl">Smart Notifications</div><p class="f-dsc">Confirmations, reminders, and status updates delivered automatically.</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="sec-alt" id="how-it-works">
+  <div class="section">
+    <div class="eyebrow">Simple process</div>
+    <h2 class="sec-title">Up and running in <em>three steps</em></h2>
+    <div class="steps">
+      <div class="fade">
+        <div class="step-bar" style="--bar:#2563EB"></div>
+        <div class="s-num">01</div>
+        <div class="s-ttl">Login to your portal</div>
+        <p class="s-dsc">Each user gets a role-protected portal — employee, maintenance, or admin — tailored to their workflow.</p>
+      </div>
+      <div class="fade">
+        <div class="step-bar" style="--bar:#16A34A"></div>
+        <div class="s-num">02</div>
+        <div class="s-ttl">Find &amp; book a resource</div>
+        <p class="s-dsc">Browse live availability by filter, pick your desk or room, and confirm in seconds.</p>
+      </div>
+      <div class="fade">
+        <div class="step-bar" style="--bar:#D97706"></div>
+        <div class="s-num">03</div>
+        <div class="s-ttl">System handles the rest</div>
+        <p class="s-dsc">Cleaning queues update, admins are notified, and all conflicts are blocked automatically.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTALS -->
+<section class="section" id="portals">
+  <div class="eyebrow">Three portals</div>
+  <h2 class="sec-title">Built for every <em>role</em> in your office</h2>
+  <div class="portal-wrap fade">
+    <div class="portal-side">
+      <button class="ptab active" onclick="switchPortal('emp',this)">
+        <div class="ptab-ico" style="background:var(--accent-s)">👤</div>
+        <div><div class="ptab-lbl">Employee</div><div class="ptab-sub">Search &amp; book</div></div>
+      </button>
+      <button class="ptab" onclick="switchPortal('mnt',this)">
+        <div class="ptab-ico" style="background:var(--amber-s)">🔧</div>
+        <div><div class="ptab-lbl">Maintenance</div><div class="ptab-sub">Service queue</div></div>
+      </button>
+      <button class="ptab" onclick="switchPortal('adm',this)">
+        <div class="ptab-ico" style="background:var(--green-s)">⚙️</div>
+        <div><div class="ptab-lbl">Admin</div><div class="ptab-sub">Full control</div></div>
+      </button>
+    </div>
+    <div class="portal-body">
+      <div class="portal-panel show" id="panel-emp">
+        <div class="pb-eye">Employee Portal</div>
+        <div class="pb-ttl">Book your workspace</div>
+        <ul class="pb-list">
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>Secure login and registration</li>
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>Search desks by floor, zone, or amenity</li>
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>Instant desk or meeting room booking</li>
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>View and manage upcoming bookings</li>
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>Cancel or modify any existing booking</li>
+          <li><div class="pb-chk" style="background:var(--accent-s);color:var(--accent)">✓</div>Receive booking confirmations and reminders</li>
+        </ul>
+      </div>
+      <div class="portal-panel" id="panel-mnt">
+        <div class="pb-eye">Maintenance Portal</div>
+        <div class="pb-ttl">Keep things clean &amp; ready</div>
+        <ul class="pb-list">
+          <li><div class="pb-chk" style="background:var(--amber-s);color:var(--amber)">✓</div>Login to the maintenance portal</li>
+          <li><div class="pb-chk" style="background:var(--amber-s);color:var(--amber)">✓</div>View real-time cleaning queue for vacated desks</li>
+          <li><div class="pb-chk" style="background:var(--amber-s);color:var(--amber)">✓</div>Mark resources as Out of Service for repairs</li>
+          <li><div class="pb-chk" style="background:var(--amber-s);color:var(--amber)">✓</div>Toggle desk status from Dirty to Available</li>
+          <li><div class="pb-chk" style="background:var(--amber-s);color:var(--amber)">✓</div>View maintenance logs and history</li>
+        </ul>
+      </div>
+      <div class="portal-panel" id="panel-adm">
+        <div class="pb-eye">Admin Dashboard</div>
+        <div class="pb-ttl">Total visibility &amp; control</div>
+        <ul class="pb-list">
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>Full inventory management — Add, Edit, Delete</li>
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>User management and role assignment</li>
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>Configure booking rules and restrictions</li>
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>View all bookings across the organization</li>
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>Analytics: peak hours, utilization reports</li>
+          <li><div class="pb-chk" style="background:var(--green-s);color:var(--green)">✓</div>System health monitoring and configuration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-outer">
+  <div class="cta-box fade">
+    <div class="cta-text">
+      <p>Ready to get started?</p>
+      <h2>Fix your hybrid office,<br>once and for all.</h2>
+    </div>
+    <div class="cta-acts">
+      <a href="login.html" class="btn-white">Get Started Free</a>
+      <a href="#features" class="btn-wout">Learn More</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+    </div>
+    <span class="logo-name">WorkSpace<span>Pro</span></span>
+  </div>
+  <p class="foot-note">WPL Mini Project · MERN Stack · HTML, CSS &amp; Vanilla JS</p>
+</footer>
+
+<script>
+  // Sticky nav
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Portal tabs
+  function switchPortal(id, btn) {
+    document.querySelectorAll('.portal-panel').forEach(p => p.classList.remove('show'));
+    document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('show');
+    btn.classList.add('active');
+  }
+
+  // Step bar dynamic colors
+  document.querySelectorAll('.step-bar').forEach(el => {
+    const color = el.style.getPropertyValue('--bar') || '#2563EB';
+    const accent = document.createElement('span');
+    accent.style.cssText = `position:absolute;left:0;top:0;width:40%;height:100%;border-radius:4px;background:${color}`;
+    el.style.position = 'relative';
+    el.appendChild(accent);
+  });
+
+  // Fade-in on scroll
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
